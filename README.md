@@ -360,7 +360,7 @@ async with client.connect():
 如果需要连接到不同的服务器：
 
 ```python
-client = DhubMCPClient(base_url="http://your-custom-url.com/mcp")
+client = DhubMCPClient(base_url="https://your-custom-url.com/mcp")
 ```
 
 ### Q5: Windows 控制台显示乱码怎么办？

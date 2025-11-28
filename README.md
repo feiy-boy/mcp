@@ -50,7 +50,7 @@ pip install -r requirements-client.txt
 Contact the platform to get your:
 - `x_api_key`: API Key
 - `x_secret_key`: Secret Key
-- Official Website: https://mcp.mongoso.vip
+- Official Website: https://mcp.fusionconnectgroup.com
 
 ## 🎯 Quick Start
 
@@ -398,8 +398,8 @@ tail -f logs/mcp_client_*.log
 
 ## 🔗 Related Links
 
-- **Server Address**: `https://mcp.mongoso.vip/dhub_mcp/mcp`
-- **Official Website**: https://mcp.mongoso.vip
+- **Server Address**: `https://mcp.fusionconnectgroup.com/dhub_mcp/mcp`
+- **Official Website**: https://mcp.fusionconnectgroup.com
 
 ## 📄 License
 

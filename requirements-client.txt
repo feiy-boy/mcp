@@ -9,6 +9,4 @@ loguru>=0.7.2
 # 可选: 环境变量管理
 python-dotenv>=1.0.0
 
-# 如果需要使用服务器端功能，请安装完整依赖:
-# pip install -r requirements.txt
 

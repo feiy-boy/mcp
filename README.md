@@ -1,76 +1,76 @@
-# mcp
+# MCP
 Global Hotel Supply Chain Management System
 
-#  全球酒店预订 MCP 客户端
+# Global Hotel Booking MCP Client
 
-这是一个基于 FastMCP 框架的酒店预订服务客户端，提供酒店搜索、详情查询和价格查询功能。
+This is a hotel booking service client based on the FastMCP framework, providing hotel search, detail inquiry, and price query functions.
 
-## 📋 目录
+## 📋 Table of Contents
 
-- [功能特性](#功能特性)
-- [环境要求](#环境要求)
-- [安装](#安装)
-- [快速开始](#快速开始)
-- [API 方法](#api-方法)
-- [详细示例](#详细示例)
-- [错误处理](#错误处理)
-- [常见问题](#常见问题)
+- [Features](#features)
+- [Environment Requirements](#environment-requirements)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [API Methods](#api-methods)
+- [Detailed Examples](#detailed-examples)
+- [Error Handling](#error-handling)
+- [Frequently Asked Questions](#frequently-asked-questions)
 
-## 🚀 功能特性
+## 🚀 Features
 
-- ✅ 通过地址（经纬度）搜索酒店
-- ✅ 通过酒店名称搜索酒店
-- ✅ 查询酒店详细信息
-- ✅ 查询酒店实时价格和可用房型
-- ✅ 支持多语言（中文/英文）
-- ✅ 异步编程，高性能
-- ✅ 完整的日志记录
+- ✅ Search hotels by address (latitude/longitude)
+- ✅ Search hotels by hotel name
+- ✅ Query detailed hotel information
+- ✅ Query real-time hotel prices and available room types
+- ✅ Multi-language support (Chinese/English)
+- ✅ Asynchronous programming for high performance
+- ✅ Comprehensive logging
 
-## 📦 环境要求
+## 📦 Environment Requirements
 
 - Python 3.8+
-- 有效的 API 密钥和 Secret 密钥
+- Valid API Key and Secret Key
 
-## 🔧 安装
+## 🔧 Installation
 
-### 1. 安装依赖
+### 1. Install Dependencies
 
 ```bash
 pip install fastmcp loguru python-dotenv
 ```
 
-或使用提供的依赖文件：
+Or use the provided requirements file:
 
 ```bash
 pip install -r requirements-client.txt
 ```
 
-### 2. 获取 API 凭证
+### 2. Obtain API Credentials
 
-联系平台获取您的：
-- `x_api_key`: API 密钥
-- `x_secret_key`: Secret 密钥
-- 官网地址：https://mcp.mongoso.vip
-- 
-## 🎯 快速开始
+Contact the platform to get your:
+- `x_api_key`: API Key
+- `x_secret_key`: Secret Key
+- Official Website: https://mcp.mongoso.vip
 
-### 基础示例
+## 🎯 Quick Start
+
+### Basic Example
 
 ```python
 import asyncio
 from client import DhubMCPClient
 
 async def main():
-    # 初始化客户端
+    # Initialize client
     client = DhubMCPClient()
     
-    # 连接到服务器
+    # Connect to server
     async with client.connect():
-        # 搜索酒店
+        # Search hotels
         result = await client.search_hotels_by_hotel_name(
             x_api_key="your_api_key",
             x_secret_key="your_secret_key",
-            keyword="东京",
+            keyword="Tokyo",
             check_in_date="2025-12-01",
             check_out_date="2025-12-03",
             language="zh-CN",
@@ -78,40 +78,40 @@ async def main():
         )
         print(result)
 
-# 运行
+# Run
 asyncio.run(main())
 ```
 
-## 📖 API 方法
+## 📖 API Methods
 
-### 1. 通过地址搜索酒店 `search_hotels_by_address`
+### 1. Search Hotels by Address `search_hotels_by_address`
 
-通过经纬度坐标搜索附近的酒店。
+Search for nearby hotels using latitude and longitude coordinates.
 
-**参数：**
+**Parameters:**
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| x_api_key | str | 是 | API 密钥 |
-| x_secret_key | str | 是 | Secret 密钥 |
-| lng_google | float | 是 | 谷歌经度（保留6位小数） |
-| lat_google | float | 是 | 谷歌纬度（保留6位小数） |
-| check_in_date | str | 是 | 入住日期（格式：yyyy-MM-dd） |
-| check_out_date | str | 是 | 退房日期（格式：yyyy-MM-dd） |
-| language | str | 否 | 语言类型，默认 en-US，可选 zh-CN |
-| price_min | float | 否 | 最低价格 |
-| price_max | float | 否 | 最高价格 |
-| star_ratings | List[str] | 否 | 星级列表，如 ["3", "4", "5"] |
-| distance | int | 否 | 距离范围，单位 km，默认 5 |
-| page_size | int | 否 | 每页数量，默认 20，最大 50 |
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| x_api_key | str | Yes | API Key |
+| x_secret_key | str | Yes | Secret Key |
+| lng_google | float | Yes | Google longitude (6 decimal places) |
+| lat_google | float | Yes | Google latitude (6 decimal places) |
+| check_in_date | str | Yes | Check-in date (Format: yyyy-MM-dd) |
+| check_out_date | str | Yes | Check-out date (Format: yyyy-MM-dd) |
+| language | str | No | Language type, default: en-US, optional: zh-CN |
+| price_min | float | No | Minimum price |
+| price_max | float | No | Maximum price |
+| star_ratings | List[str] | No | Star rating list, e.g., ["3", "4", "5"] |
+| distance | int | No | Distance range in km, default: 5 |
+| page_size | int | No | Number of results per page, default: 20, max: 50 |
 
-**示例：**
+**Example:**
 
 ```python
 result = await client.search_hotels_by_address(
     x_api_key="your_api_key",
     x_secret_key="your_secret_key",
-    lng_google=139.691706,  # 东京站
+    lng_google=139.691706,  # Tokyo Station
     lat_google=35.689487,
     check_in_date="2025-12-01",
     check_out_date="2025-12-03",
@@ -121,33 +121,33 @@ result = await client.search_hotels_by_address(
 )
 ```
 
-### 2. 通过酒店名称搜索 `search_hotels_by_hotel_name`
+### 2. Search Hotels by Name `search_hotels_by_hotel_name`
 
-通过酒店名称关键词搜索酒店。
+Search for hotels using keywords in the hotel name.
 
-**参数：**
+**Parameters:**
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| x_api_key | str | 是 | API 密钥 |
-| x_secret_key | str | 是 | Secret 密钥 |
-| keyword | str | 是 | 酒店名称关键词 |
-| check_in_date | str | 是 | 入住日期（格式：yyyy-MM-dd） |
-| check_out_date | str | 是 | 退房日期（格式：yyyy-MM-dd） |
-| language | str | 否 | 语言类型，默认 en-US，可选 zh-CN |
-| price_min | float | 否 | 最低价格 |
-| price_max | float | 否 | 最高价格 |
-| star_ratings | List[str] | 否 | 星级列表 |
-| distance | int | 否 | 距离范围，单位 km，默认 5 |
-| page_size | int | 否 | 每页数量，默认 20，最大 50 |
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| x_api_key | str | Yes | API Key |
+| x_secret_key | str | Yes | Secret Key |
+| keyword | str | Yes | Hotel name keyword |
+| check_in_date | str | Yes | Check-in date (Format: yyyy-MM-dd) |
+| check_out_date | str | Yes | Check-out date (Format: yyyy-MM-dd) |
+| language | str | No | Language type, default: en-US, optional: zh-CN |
+| price_min | float | No | Minimum price |
+| price_max | float | No | Maximum price |
+| star_ratings | List[str] | No | Star rating list |
+| distance | int | No | Distance range in km, default: 5 |
+| page_size | int | No | Number of results per page, default: 20, max: 50 |
 
-**示例：**
+**Example:**
 
 ```python
 result = await client.search_hotels_by_hotel_name(
     x_api_key="your_api_key",
     x_secret_key="your_secret_key",
-    keyword="希尔顿",
+    keyword="Hilton",
     check_in_date="2025-12-01",
     check_out_date="2025-12-03",
     language="zh-CN",
@@ -158,21 +158,21 @@ result = await client.search_hotels_by_hotel_name(
 )
 ```
 
-### 3. 查询酒店详细信息 `get_hotel_details`
+### 3. Query Hotel Details `get_hotel_details`
 
-根据酒店 ID 获取酒店的详细信息。
+Get detailed information about a hotel using its ID.
 
-**参数：**
+**Parameters:**
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| x_api_key | str | 是 | API 密钥 |
-| x_secret_key | str | 是 | Secret 密钥 |
-| hotel_id | int | 是 | 酒店 ID |
-| language | str | 否 | 语言类型，默认 en-US，可选 zh-CN |
-| need_facility | bool | 否 | 是否包含设施信息，默认 True |
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| x_api_key | str | Yes | API Key |
+| x_secret_key | str | Yes | Secret Key |
+| hotel_id | int | Yes | Hotel ID |
+| language | str | No | Language type, default: en-US, optional: zh-CN |
+| need_facility | bool | No | Whether to include facility information, default: True |
 
-**示例：**
+**Example:**
 
 ```python
 result = await client.get_hotel_details(
@@ -184,25 +184,25 @@ result = await client.get_hotel_details(
 )
 ```
 
-### 4. 查询酒店价格 `check_hotel_price`
+### 4. Check Hotel Price `check_hotel_price`
 
-查询指定酒店的实时价格和可用房型。
+Query real-time prices and available room types for a specific hotel.
 
-**参数：**
+**Parameters:**
 
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| x_api_key | str | 是 | API 密钥 |
-| x_secret_key | str | 是 | Secret 密钥 |
-| hotel_id | int | 是 | 酒店 ID |
-| check_in_date | str | 是 | 入住日期（格式：YYYY-MM-DD） |
-| check_out_date | str | 是 | 退房日期（格式：YYYY-MM-DD） |
-| num_of_adults | int | 否 | 成人数量，默认 2 |
-| num_of_children | int | 否 | 儿童数量，默认 0 |
-| nationality | str | 否 | 国籍代码（ISO 2位代码），默认 CN |
-| language | str | 否 | 语言类型，默认 en-US，可选 zh-CN |
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| x_api_key | str | Yes | API Key |
+| x_secret_key | str | Yes | Secret Key |
+| hotel_id | int | Yes | Hotel ID |
+| check_in_date | str | Yes | Check-in date (Format: yyyy-MM-dd) |
+| check_out_date | str | Yes | Check-out date (Format: yyyy-MM-dd) |
+| num_of_adults | int | No | Number of adults, default: 2 |
+| num_of_children | int | No | Number of children, default: 0 |
+| nationality | str | No | Nationality code (ISO 2-digit), default: CN |
+| language | str | No | Language type, default: en-US, optional: zh-CN |
 
-**示例：**
+**Example:**
 
 ```python
 result = await client.check_hotel_price(
@@ -218,9 +218,9 @@ result = await client.check_hotel_price(
 )
 ```
 
-## 💡 详细示例
+## 💡 Detailed Examples
 
-### 完整工作流程
+### Complete Workflow
 
 ```python
 import asyncio
@@ -229,38 +229,38 @@ from loguru import logger
 import os
 
 async def hotel_search_workflow():
-    """完整的酒店搜索工作流程"""
+    """Complete hotel search workflow"""
     
-    # 从环境变量获取凭证（推荐）
+    # Get credentials from environment variables (recommended)
     api_key = os.getenv("DHUB_API_KEY")
     secret_key = os.getenv("DHUB_SECRET_KEY")
     
-    # 或直接使用凭证（不推荐在生产环境中）
+    # Or use credentials directly (not recommended for production)
     # api_key = "your_api_key"
     # secret_key = "your_secret_key"
     
-    # 初始化客户端
+    # Initialize client
     client = DhubMCPClient()
     
     async with client.connect():
-        # 步骤1: 搜索酒店
-        logger.info("步骤1: 搜索东京的酒店")
+        # Step 1: Search for hotels
+        logger.info("Step 1: Search for hotels in Tokyo")
         search_result = await client.search_hotels_by_hotel_name(
             x_api_key=api_key,
             x_secret_key=secret_key,
-            keyword="东京",
+            keyword="Tokyo",
             check_in_date="2025-12-01",
             check_out_date="2025-12-03",
             language="zh-CN",
             page_size=5
         )
-        print(f"搜索结果: {search_result}\n")
+        print(f"Search Results: {search_result}\n")
         
-        # 步骤2: 假设从搜索结果中得到了酒店ID
-        hotel_id = 1364848  # 实际使用时从搜索结果中提取
+        # Step 2: Assume hotel ID is obtained from search results
+        hotel_id = 1364848  # Extract from search results in actual use
         
-        # 步骤3: 查询酒店详情
-        logger.info(f"步骤2: 查询酒店 {hotel_id} 的详细信息")
+        # Step 3: Query hotel details
+        logger.info(f"Step 2: Query details for hotel {hotel_id}")
         details = await client.get_hotel_details(
             x_api_key=api_key,
             x_secret_key=secret_key,
@@ -268,10 +268,10 @@ async def hotel_search_workflow():
             language="zh-CN",
             need_facility=True
         )
-        print(f"酒店详情: {details}\n")
+        print(f"Hotel Details: {details}\n")
         
-        # 步骤4: 查询价格
-        logger.info(f"步骤3: 查询酒店 {hotel_id} 的价格")
+        # Step 4: Query price
+        logger.info(f"Step 3: Check price for hotel {hotel_id}")
         price = await client.check_hotel_price(
             x_api_key=api_key,
             x_secret_key=secret_key,
@@ -283,37 +283,37 @@ async def hotel_search_workflow():
             nationality="CN",
             language="zh-CN"
         )
-        print(f"价格信息: {price}\n")
+        print(f"Price Information: {price}\n")
 
 if __name__ == "__main__":
     asyncio.run(hotel_search_workflow())
 ```
 
-### 使用环境变量管理凭证
+### Manage Credentials with Environment Variables
 
-创建 `.env` 文件：
+Create a `.env` file:
 
 ```env
 DHUB_API_KEY=your_api_key_here
 DHUB_SECRET_KEY=your_secret_key_here
 ```
 
-在代码中使用：
+Use in code:
 
 ```python
 from dotenv import load_dotenv
 import os
 
-# 加载环境变量
+# Load environment variables
 load_dotenv()
 
 api_key = os.getenv("DHUB_API_KEY")
 secret_key = os.getenv("DHUB_SECRET_KEY")
 ```
 
-## 🛡️ 错误处理
+## 🛡️ Error Handling
 
-建议使用 try-except 块处理可能的错误：
+It is recommended to use try-except blocks to handle potential errors:
 
 ```python
 async with client.connect():
@@ -321,96 +321,95 @@ async with client.connect():
         result = await client.search_hotels_by_hotel_name(
             x_api_key=api_key,
             x_secret_key=secret_key,
-            keyword="东京",
+            keyword="Tokyo",
             check_in_date="2025-12-01",
             check_out_date="2025-12-03",
             language="zh-CN"
         )
         print(result)
     except Exception as e:
-        logger.error(f"搜索失败: {e}")
-        # 处理错误
+        logger.error(f"Search failed: {e}")
+        # Handle error
 ```
 
-常见错误类型：
-- **认证失败**: 检查 API Key 和 Secret Key 是否正确
-- **连接超时**: 检查网络连接
-- **参数错误**: 检查日期格式、酒店ID等参数是否正确
+Common Error Types:
+- **Authentication Failed**: Check if API Key and Secret Key are correct
+- **Connection Timeout**: Check network connection
+- **Invalid Parameters**: Verify date format, hotel ID, and other parameters
 
-## ❓ 常见问题
+## ❓ Frequently Asked Questions
 
-### Q1: 如何获取 API 凭证？
+### Q1: How to obtain API credentials?
 
-联系平台申请 API 密钥和 Secret 密钥。
+Contact the platform to apply for API Key and Secret Key.
 
-### Q2: 支持哪些语言？
+### Q2: Which languages are supported?
 
-目前支持：
-- `en-US`: 英文
-- `zh-CN`: 中文
+Currently supported:
+- `en-US`: English
+- `zh-CN`: Chinese
 
-### Q3: 日期格式是什么？
+### Q3: What is the date format?
 
-- 入住/退房日期格式：`yyyy-MM-dd`（例如：`2025-12-01`）
-- 必须是未来的日期
-- 退房日期必须晚于入住日期
+- Check-in/check-out date format: `yyyy-MM-dd` (e.g., `2025-12-01`)
+- Must be a future date
+- Check-out date must be later than check-in date
 
-### Q4: 如何更改服务器地址？
+### Q4: How to change the server address?
 
-如果需要连接到不同的服务器：
+To connect to a different server:
 
 ```python
 client = DhubMCPClient(base_url="https://your-custom-url.com/mcp")
 ```
 
-### Q5: Windows 控制台显示乱码怎么办？
+### Q5: How to fix garbled characters in Windows Command Prompt?
 
-这是编码问题，不影响功能。可以：
-1. 使用 PowerShell 而不是 CMD
-2. 设置环境变量：
+This is an encoding issue and does not affect functionality. You can:
+1. Use PowerShell instead of CMD
+2. Set environment variables:
    ```bash
    set PYTHONIOENCODING=utf-8
    chcp 65001
    ```
 
-### Q6: 如何测试连接是否正常？
+### Q6: How to test if the connection is working?
 
-运行客户端文件：
+Run the client file:
 
 ```bash
 python client.py
 ```
 
-这将执行内置的测试示例。
+This will execute the built-in test example.
 
-## 📝 日志
+## 📝 Logging
 
-客户端会自动记录日志到 `logs/` 目录：
-- 文件名格式：`mcp_client_{时间}.log`
-- 日志保留 7 天
-- 每天轮换一次
+The client automatically logs to the `logs/` directory:
+- File name format: `mcp_client_{timestamp}.log`
+- Logs are retained for 7 days
+- Daily log rotation
 
-查看日志：
+View logs:
 
 ```bash
 tail -f logs/mcp_client_*.log
 ```
 
-## 🔗 相关链接
+## 🔗 Related Links
 
-- **服务器地址**: `https://mcp.mongoso.vip/dhub_mcp/mcp`
-- **官网地址**:  https://mcp.mongoso.vip
+- **Server Address**: `https://mcp.mongoso.vip/dhub_mcp/mcp`
+- **Official Website**: https://mcp.mongoso.vip
 
-## 📄 许可证
+## 📄 License
 
-根据项目许可证使用。
+Use in accordance with the project license.
 
-## 🤝 技术支持
+## 🤝 Technical Support
 
-如有问题，请联系技术支持团队。
+For any questions, please contact the technical support team.
 
 ---
 
-**版本**: 1.0.0  
-**更新日期**: 2025-11-28
-
+**Version**: 1.0.0  
+**Last Updated**: 2025-11-28

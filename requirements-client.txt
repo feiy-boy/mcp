@@ -1,0 +1,14 @@
+# Dhub MCP 客户端依赖
+
+# FastMCP Framework (HTTP客户端支持)
+fastmcp>=2.0.0
+
+# 日志
+loguru>=0.7.2
+
+# 可选: 环境变量管理
+python-dotenv>=1.0.0
+
+# 如果需要使用服务器端功能，请安装完整依赖:
+# pip install -r requirements.txt
+

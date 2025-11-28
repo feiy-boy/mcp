@@ -13,7 +13,7 @@ from loguru import logger
 class DhubMCPClient:
     """Dhub酒店预订MCP客户端"""
     
-    def __init__(self, base_url: str = "http://dhub-mcp.mongoso.vip/dhub_mcp/mcp"):
+    def __init__(self, base_url: str = "https://dhub-mcp.mongoso.vip/dhub_mcp/mcp"):
         """
         初始化MCP客户端
         

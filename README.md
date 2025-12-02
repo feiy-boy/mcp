@@ -240,7 +240,7 @@ async def hotel_search_workflow():
     # secret_key = "your_secret_key"
     
     # Initialize client
-    client = DhubMCPClient()
+    client = DhubMCPClient("url endpoint")
     
     async with client.connect():
         # Step 1: Search for hotels

@@ -390,6 +390,57 @@ View logs:
 tail -f logs/mcp_client_*.log
 ```
 
+## 🖥️ Cursor IDE Configuration
+
+To use this MCP service in Cursor IDE, add the following configuration to your `mcp.json` file:
+
+**Configuration file location:**
+- Windows: `C:\Users\<username>\.cursor\mcp.json`
+- macOS: `~/.cursor/mcp.json`
+- Linux: `~/.cursor/mcp.json`
+
+**Configuration content:**
+
+```json
+{
+  "mcpServers": {
+    "global_hotel_mcp": {
+      "name": "Global Hotel MCP",
+      "type": "http",
+      "url": "https://mcp.fusionconnectgroup.com/sse/",
+      "ENV": {
+        "x_api_key": "your_api_key_here",
+        "x_secret_key": "your_secret_key_here"
+      }
+    }
+  }
+}
+```
+
+**Configuration Parameters:**
+
+| Parameter | Description |
+|-----------|-------------|
+| `name` | Display name in Cursor |
+| `type` | Connection type, use `http` |
+| `url` | MCP service endpoint URL |
+| `ENV.x_api_key` | Your API Key |
+| `ENV.x_secret_key` | Your Secret Key |
+
+**Steps:**
+
+1. Open or create the `mcp.json` file at the location above
+2. Copy the configuration content and replace with your actual API credentials
+3. Save the file
+4. Restart Cursor IDE
+5. The MCP tools will be available in Cursor's AI assistant
+
+**Verification:**
+
+After configuration, you can verify by asking Cursor's AI assistant:
+- "Search for hotels in Tokyo"
+- "Find hotel details for hotel ID 1364848"
+
 ## 🔗 Related Links
 
 - **Server Address**: `https://mcp.fusionconnectgroup.com/sse`

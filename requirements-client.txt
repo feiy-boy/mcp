@@ -1,12 +1,6 @@
-# Dhub MCP 客户端依赖
+# HTTP 异步客户端
+httpx>=0.25.0
 
-# FastMCP Framework (HTTP客户端支持)
-fastmcp>=2.0.0
-
-# 日志
-loguru>=0.7.2
-
-# 可选: 环境变量管理
-python-dotenv>=1.0.0
-
+# 日志库
+loguru>=0.7.0
 

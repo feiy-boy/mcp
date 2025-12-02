@@ -42,7 +42,7 @@ pip install fastmcp loguru python-dotenv
 Or use the provided requirements file:
 
 ```bash
-pip install -r requirements-client.txt
+pip install -r requirements.txt
 ```
 
 ### 2. Obtain API Credentials
@@ -398,7 +398,7 @@ tail -f logs/mcp_client_*.log
 
 ## 🔗 Related Links
 
-- **Server Address**: `https://mcp.fusionconnectgroup.com/dhub_mcp/mcp`
+- **Server Address**: `https://mcp.fusionconnectgroup.com/sse`
 - **Official Website**: https://mcp.fusionconnectgroup.com
 
 ## 📄 License

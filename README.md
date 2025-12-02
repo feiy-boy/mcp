@@ -36,12 +36,6 @@ This is a hotel booking service client based on the FastMCP framework, providing
 ### 1. Install Dependencies
 
 ```bash
-pip install fastmcp loguru python-dotenv
-```
-
-Or use the provided requirements file:
-
-```bash
 pip install -r requirements.txt
 ```
 

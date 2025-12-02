@@ -62,7 +62,7 @@ from client import DhubMCPClient
 
 async def main():
     # Initialize client
-    client = DhubMCPClient()
+    client = DhubMCPClient("url endpoint")
     
     # Connect to server
     async with client.connect():

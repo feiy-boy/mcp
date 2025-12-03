@@ -41,11 +41,46 @@ pip install -r requirements.txt
 
 ### 2. Obtain API Credentials
 
-Contact the platform to get your:
-- `x_api_key`: API Key
-- `x_secret_key`: Secret Key
-- Official Website: https://mcp.fusionconnectgroup.com
-- Register via email on the official website. Upon successful registration, you will receive an email verification message. After clicking the verification link, we will send the x_api_key and x_secret_key to your email address.
+You can obtain API credentials through two ways: platform contact or self-service registration. Details are as follows:
+
+2.1 Core Credentials
+
+- x_api_key: Unique API access key (for identity verification)
+
+- x_secret_key: Secret key (for request signature, keep it confidential)
+
+2.2 Self-Service Registration (Recommended)
+
+1. Access Official Website: https://mcp.fusionconnectgroup.com
+
+2. Register: Complete registration via email on the official website.
+
+3. Email Verification: Receive a verification email after successful registration and click the verification link.
+
+4. Get Credentials: The system will send x_api_key and x_secret_key to your registered email.
+
+2.3 Registration Types & Request Quotas
+
+Registration Type
+
+Request Quota
+
+Personal Registration
+
+100 requests
+
+Enterprise Registration
+
+1000 requests
+
+2.4 Request for Additional Quotas
+
+If you need more request quotas, contact us via:
+
+- Email: 111111
+
+- Phone: 18983234
+
 
 ## 🎯 Quick Start
 

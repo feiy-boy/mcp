@@ -33,7 +33,7 @@ This is a hotel booking service client based on the FastMCP framework, providing
 
 ## 🔧 Installation
 
-### 1. Install Dependencies
+# 1. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -74,7 +74,7 @@ If you need more request quotas, contact us via:
 - Phone: 18983234
 
 
-## 🎯 Quick Start
+# 3. 🎯 Quick Start
 
 ### Basic Example
 
@@ -104,7 +104,7 @@ async def main():
 asyncio.run(main())
 ```
 
-## 📖 API Methods
+# 4. 📖 API Methods
 
 ### 1. Search Hotels by Address `search_hotels_by_address`
 
@@ -240,7 +240,7 @@ result = await client.check_hotel_price(
 )
 ```
 
-## 💡 Detailed Examples
+# 5. 💡 Detailed Examples
 
 ### Complete Workflow
 
@@ -333,7 +333,46 @@ api_key = os.getenv("X_API_KEY")
 secret_key = os.getenv("X_SECRET_KEY")
 ```
 
-## 🛡️ Error Handling
+
+# 6. 🖥️ Cursor IDE Configuration
+
+To use this MCP service in Cursor IDE, add the following configuration to your `mcp.json` file:
+
+**Configuration file location:**
+- Windows: `C:\Users\<username>\.cursor\mcp.json`
+- macOS: `~/.cursor/mcp.json`
+- Linux: `~/.cursor/mcp.json`
+
+**Configuration content:**
+
+```json
+{
+  "mcpServers": {
+    "global_hotel_mcp": {
+      "name": "Global Hotel MCP",
+      "type": "http",
+      "url": "https://mcp.fusionconnectgroup.com/mcp",
+      "env": {
+        "x_api_key": "your_api_key_here",
+        "x_secret_key": "your_secret_key_here"
+      }
+    }
+  }
+}
+```
+
+**Configuration Parameters:**
+
+| Parameter | Description |
+|-----------|-------------|
+| `name` | Display name in Cursor |
+| `type` | Connection type, use `http` |
+| `url` | MCP service endpoint URL |
+| `env.x_api_key` | Your API Key |
+| `env.x_secret_key` | Your Secret Key |
+
+
+# 7. 🛡️ Error Handling
 
 It is recommended to use try-except blocks to handle potential errors:
 
@@ -359,7 +398,7 @@ Common Error Types:
 - **Connection Timeout**: Check network connection
 - **Invalid Parameters**: Verify date format, hotel ID, and other parameters
 
-## ❓ Frequently Asked Questions
+# 8. ❓ Frequently Asked Questions
 
 ### Q1: How to obtain API credentials?
 
@@ -405,7 +444,7 @@ python client.py
 
 This will execute the built-in test example.
 
-## 📝 Logging
+# 9. 📝 Logging
 
 The client automatically logs to the `logs/` directory:
 - File name format: `mcp_client_{timestamp}.log`
@@ -417,43 +456,6 @@ View logs:
 ```bash
 tail -f logs/mcp_client_*.log
 ```
-
-## 🖥️ Cursor IDE Configuration
-
-To use this MCP service in Cursor IDE, add the following configuration to your `mcp.json` file:
-
-**Configuration file location:**
-- Windows: `C:\Users\<username>\.cursor\mcp.json`
-- macOS: `~/.cursor/mcp.json`
-- Linux: `~/.cursor/mcp.json`
-
-**Configuration content:**
-
-```json
-{
-  "mcpServers": {
-    "global_hotel_mcp": {
-      "name": "Global Hotel MCP",
-      "type": "http",
-      "url": "https://mcp.fusionconnectgroup.com/mcp",
-      "env": {
-        "x_api_key": "your_api_key_here",
-        "x_secret_key": "your_secret_key_here"
-      }
-    }
-  }
-}
-```
-
-**Configuration Parameters:**
-
-| Parameter | Description |
-|-----------|-------------|
-| `name` | Display name in Cursor |
-| `type` | Connection type, use `http` |
-| `url` | MCP service endpoint URL |
-| `ENV.x_api_key` | Your API Key |
-| `ENV.x_secret_key` | Your Secret Key |
 
 **Steps:**
 

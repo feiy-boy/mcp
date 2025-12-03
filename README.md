@@ -45,6 +45,7 @@ Contact the platform to get your:
 - `x_api_key`: API Key
 - `x_secret_key`: Secret Key
 - Official Website: https://mcp.fusionconnectgroup.com
+- Register via email on the official website. Upon successful registration, you will receive an email verification message. After clicking the verification link, we will send the x_api_key and x_secret_key to your email address.
 
 ## 🎯 Quick Start
 
@@ -56,7 +57,7 @@ from client import DhubMCPClient
 
 async def main():
     # Initialize client
-    client = DhubMCPClient("url endpoint")
+    client = DhubMCPClient()
     
     # Connect to server
     async with client.connect():
@@ -230,11 +231,11 @@ async def hotel_search_workflow():
     secret_key = os.getenv("DHUB_SECRET_KEY")
     
     # Or use credentials directly (not recommended for production)
-    # api_key = "your_api_key"
-    # secret_key = "your_secret_key"
+    # x_api_key = "your_api_key"
+    # x_secret_key = "your_secret_key"
     
     # Initialize client
-    client = DhubMCPClient("url endpoint")
+    client = DhubMCPClient()
     
     async with client.connect():
         # Step 1: Search for hotels
@@ -288,8 +289,8 @@ if __name__ == "__main__":
 Create a `.env` file:
 
 ```env
-DHUB_API_KEY=your_api_key_here
-DHUB_SECRET_KEY=your_secret_key_here
+X_API_KEY=your_api_key_here
+X_SECRET_KEY=your_secret_key_here
 ```
 
 Use in code:
@@ -301,8 +302,8 @@ import os
 # Load environment variables
 load_dotenv()
 
-api_key = os.getenv("DHUB_API_KEY")
-secret_key = os.getenv("DHUB_SECRET_KEY")
+api_key = os.getenv("X_API_KEY")
+secret_key = os.getenv("X_SECRET_KEY")
 ```
 
 ## 🛡️ Error Handling
@@ -407,8 +408,8 @@ To use this MCP service in Cursor IDE, add the following configuration to your `
     "global_hotel_mcp": {
       "name": "Global Hotel MCP",
       "type": "http",
-      "url": "https://mcp.fusionconnectgroup.com/sse/",
-      "ENV": {
+      "url": "https://mcp.fusionconnectgroup.com/mcp",
+      "env": {
         "x_api_key": "your_api_key_here",
         "x_secret_key": "your_secret_key_here"
       }
@@ -443,7 +444,7 @@ After configuration, you can verify by asking Cursor's AI assistant:
 
 ## 🔗 Related Links
 
-- **Server Address**: `https://mcp.fusionconnectgroup.com/sse`
+- **Server Address**: `https://mcp.fusionconnectgroup.com/mcp`
 - **Official Website**: https://mcp.fusionconnectgroup.com
 
 ## 📄 License

@@ -59,12 +59,12 @@ You can obtain API credentials through two ways: **platform contact** or **self-
 
 4. **Get Credentials**: The system will send `x_api_key` and `x_secret_key` to your registered email.
 
-### 2.3 Registration Types & Request Quotas
+### 2.3 Account  Types & Request Quotas
 
-|Registration Type|Request Quota|
+|Account  Type|Request Quota|
 |---|---|
-|Personal Registration|100 requests|
-|Enterprise Registration|1000 requests|
+|Personal Account |100 requests|
+|Enterprise Account |1000 requests|
 ### 2.4 Request for Additional Quotas
 
 If you need more request quotas, contact us via:

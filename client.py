@@ -1,5 +1,5 @@
 """
-Dhub酒店预订MCP客户端
+全球酒店预订MCP客户端
 用于调用server.py提供的MCP工具
 """
 import asyncio
@@ -11,7 +11,7 @@ from loguru import logger
 
 
 class DhubMCPClient:
-    """Dhub酒店预订MCP客户端"""
+    """全球酒店预订MCP客户端"""
     
     def __init__(self, base_url: str = "https://mcp.fusionconnectgroup.com/mcp"):
         """
@@ -33,7 +33,7 @@ class DhubMCPClient:
             # 测试连接
             try:
                 await self.client.ping()
-                logger.info("[OK] 已连接到Dhub MCP服务器")
+                logger.info("[OK] 已连接到Global Hotel MCP服务器")
             except Exception as e:
                 logger.warning(f"Ping失败，但继续尝试: {e}")
             
@@ -280,7 +280,7 @@ async def main():
     
     async with client.connect():
         logger.info("\n" + "="*60)
-        logger.info("开始测试 Dhub MCP 客户端")
+        logger.info("开始测试 Global Hotel MCP 客户端")
         logger.info("="*60 + "\n")
         
         # 示例1: 通过酒店名称搜索

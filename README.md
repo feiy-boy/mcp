@@ -369,7 +369,20 @@ To use this MCP service in Cursor IDE, add the following configuration to your `
 | `env.x_api_key` | Your API Key |
 | `env.x_secret_key` | Your Secret Key |
 
+**Steps:**
 
+1. Open or create the `mcp.json` file at the location above
+2. Copy the configuration content and replace with your actual API credentials
+3. Save the file
+4. Restart Cursor IDE
+5. The MCP tools will be available in Cursor's AI assistant
+
+**Verification:**
+
+After configuration, you can verify by asking Cursor's AI assistant:
+- "Search for hotels in Tokyo"
+- "Find hotel details for hotel ID 1364848"
+  
 # 7. 🛡️ Error Handling
 
 It is recommended to use try-except blocks to handle potential errors:
@@ -442,34 +455,8 @@ python client.py
 
 This will execute the built-in test example.
 
-# 9. 📝 Logging
 
-The client automatically logs to the `logs/` directory:
-- File name format: `mcp_client_{timestamp}.log`
-- Logs are retained for 7 days
-- Daily log rotation
-
-View logs:
-
-```bash
-tail -f logs/mcp_client_*.log
-```
-
-**Steps:**
-
-1. Open or create the `mcp.json` file at the location above
-2. Copy the configuration content and replace with your actual API credentials
-3. Save the file
-4. Restart Cursor IDE
-5. The MCP tools will be available in Cursor's AI assistant
-
-**Verification:**
-
-After configuration, you can verify by asking Cursor's AI assistant:
-- "Search for hotels in Tokyo"
-- "Find hotel details for hotel ID 1364848"
-
-## 🔗 Related Links
+# 9. 🔗 Related Links
 
 - **Server Address**: `https://mcp.fusionconnectgroup.com/mcp`
 - **Official Website**: https://mcp.fusionconnectgroup.com

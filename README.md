@@ -69,9 +69,7 @@ You can obtain API credentials through two ways: **platform contact** or **self-
 
 If you need more request quotas, contact us via:
 
-- Email: 111111
-
-- Phone: 18983234
+- Email: 1941783199@qq.com
 
 
 # 3. 🎯 Quick Start

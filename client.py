@@ -1,225 +1,85 @@
 """
-全球酒店预订 HTTP/SSE MCP 客户端
+Dhub酒店预订MCP客户端
+用于调用server.py提供的MCP工具
 """
 import asyncio
-import json
-from typing import Optional, List, Any, Dict, Callable
+from typing import Optional, List, Any, Dict
 from contextlib import asynccontextmanager
-import httpx
+
+from fastmcp import Client
 from loguru import logger
 
 
-class DhubHTTPMCPClient:
-    """全球酒店预订 HTTP/SSE MCP客户端"""
+class DhubMCPClient:
+    """Dhub酒店预订MCP客户端"""
     
-    def __init__(self, base_url: str):
+    def __init__(self, base_url: str = "https://mcp.fusionconnectgroup.com/mcp"):
         """
-        初始化HTTP MCP客户端
+        初始化MCP客户端
         
         Args:
-            base_url: MCP服务的基础URL（不包含 /mcp 路径）
+            base_url: MCP服务的基础URL
         """
-        self.base_url = base_url.rstrip('/')
-        self.mcp_base = f"{self.base_url}/mcp"
-        self.http_client: Optional[httpx.AsyncClient] = None
-        self.available_tools: List[Dict[str, Any]] = []
-        self._sse_connection = None
-        self._sse_listeners: List[Callable] = []
+        self.base_url = base_url
+        self.client = Client(base_url)
+        self.available_tools: List[Any] = []
     
     @asynccontextmanager
     async def connect(self):
         """连接到MCP服务器"""
-        logger.info(f"正在连接到 GLOBAL HOTEL MCP 服务器: {self.base_url}")
+        logger.info(f"正在连接到MCP服务器: {self.base_url}")
         
-        # 创建HTTP客户端
-        self.http_client = httpx.AsyncClient(
-            timeout=httpx.Timeout(30.0, connect=10.0),
-            limits=httpx.Limits(max_keepalive_connections=5, max_connections=10)
-        )
-        
-        try:
-            # 测试连接 - 健康检查
+        async with self.client:
+            # 测试连接
             try:
-                health_response = await self.http_client.get(f"{self.base_url}/health")
-                health_response.raise_for_status()
-                health_data = health_response.json()
-                logger.info(f"[OK] 服务器健康状态: {health_data.get('status')}")
+                await self.client.ping()
+                logger.info("[OK] 已连接到Dhub MCP服务器")
             except Exception as e:
-                logger.warning(f"健康检查失败，但继续尝试: {e}")
-            
-            # 获取服务信息
-            try:
-                info_response = await self.http_client.get(f"{self.base_url}/info")
-                info_response.raise_for_status()
-                info_data = info_response.json()
-                logger.info(f"[OK] 已连接到: {info_data.get('name')}")
-                logger.info(f"     协议: {info_data.get('protocol')}")
-                logger.info(f"     传输方式: {', '.join(info_data.get('transport', []))}")
-            except Exception as e:
-                logger.warning(f"获取服务信息失败: {e}")
+                logger.warning(f"Ping失败，但继续尝试: {e}")
             
             # 列出可用工具
-            await self._load_tools()
+            try:
+                tools_result = await self.client.list_tools()
+                
+                # 处理返回结果
+                if hasattr(tools_result, 'tools'):
+                    self.available_tools = tools_result.tools
+                elif isinstance(tools_result, list):
+                    self.available_tools = tools_result
+                else:
+                    self.available_tools = []
+                
+                logger.info(f"可用工具数量: {len(self.available_tools)}")
+                for tool in self.available_tools:
+                    tool_name = tool.name if hasattr(tool, 'name') else str(tool)
+                    tool_desc = tool.description if hasattr(tool, 'description') else ''
+                    logger.info(f"  - {tool_name}: {tool_desc}")
+            except Exception as e:
+                logger.error(f"获取工具列表失败: {e}")
             
             yield self
-            
-        finally:
-            # 清理资源
-            if self._sse_connection:
-                await self._close_sse()
-            
-            if self.http_client:
-                await self.http_client.aclose()
-                logger.info("HTTP 客户端已关闭")
     
-    async def _load_tools(self):
-        """加载可用工具列表"""
-        try:
-            response = await self.http_client.get(f"{self.mcp_base}/tools/list")
-            response.raise_for_status()
-            data = response.json()
-            
-            self.available_tools = data.get("tools", [])
-            logger.info(f"可用工具数量: {data.get('count', 0)}")
-            
-            for tool in self.available_tools:
-                if tool.get("type") == "function":
-                    func_info = tool.get("function", {})
-                    tool_name = func_info.get("name", "unknown")
-                    tool_desc = func_info.get("description", "")
-                    logger.info(f"  - {tool_name}: {tool_desc}")
-                    
-        except Exception as e:
-            logger.error(f"获取工具列表失败: {e}")
-            self.available_tools = []
-    
-    async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> str:
-        """
-        调用MCP工具（HTTP POST方式）
-        
-        Args:
-            tool_name: 工具名称
-            arguments: 工具参数
-            
-        Returns:
-            工具执行结果
-        """
+    async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
+        """调用MCP工具"""
         logger.info(f"调用工具: {tool_name}")
         logger.debug(f"参数: {arguments}")
         
         try:
-            response = await self.http_client.post(
-                f"{self.mcp_base}/call_tool",
-                json={
-                    "name": tool_name,
-                    "arguments": arguments
-                },
-                headers={"Content-Type": "application/json"}
-            )
-            
-            response.raise_for_status()
-            result_data = response.json()
+            result = await self.client.call_tool(tool_name, arguments)
             
             # 提取文本内容
-            content = result_data.get("content", [])
-            if content and len(content) > 0:
-                first_content = content[0]
-                if isinstance(first_content, dict) and "text" in first_content:
-                    return first_content["text"]
-                elif isinstance(first_content, str):
-                    return first_content
+            if hasattr(result, 'content') and result.content:
+                for content_item in result.content:
+                    if hasattr(content_item, 'text'):
+                        return content_item.text
+                    elif hasattr(content_item, 'type') and content_item.type == 'text':
+                        return str(content_item)
             
-            return json.dumps(result_data, indent=2, ensure_ascii=False)
+            return str(result)
             
-        except httpx.HTTPStatusError as e:
-            logger.error(f"HTTP错误: {e.response.status_code} - {e.response.text}")
-            raise
         except Exception as e:
             logger.error(f"调用工具时发生错误: {e}")
             raise
-    
-    async def connect_sse(self, on_message: Optional[Callable[[Dict], None]] = None):
-        """
-        建立SSE连接
-        
-        Args:
-            on_message: 接收到消息时的回调函数
-        """
-        logger.info("正在建立SSE连接...")
-        
-        if on_message:
-            self._sse_listeners.append(on_message)
-        
-        try:
-            async with self.http_client.stream(
-                "GET",
-                f"{self.mcp_base}/sse",
-                headers={"Accept": "text/event-stream"}
-            ) as response:
-                response.raise_for_status()
-                logger.info("[OK] SSE连接已建立")
-                
-                async for line in response.aiter_lines():
-                    if line.startswith("data: "):
-                        data_str = line[6:]  # 移除 "data: " 前缀
-                        
-                        try:
-                            data = json.loads(data_str)
-                            logger.debug(f"收到SSE消息: {data.get('type', 'unknown')}")
-                            
-                            # 触发所有监听器
-                            for listener in self._sse_listeners:
-                                try:
-                                    if asyncio.iscoroutinefunction(listener):
-                                        await listener(data)
-                                    else:
-                                        listener(data)
-                                except Exception as e:
-                                    logger.error(f"SSE监听器错误: {e}")
-                        
-                        except json.JSONDecodeError:
-                            logger.warning(f"无法解析SSE数据: {data_str}")
-                    
-                    elif line.startswith(": "):
-                        # 心跳消息
-                        logger.debug("收到SSE心跳")
-                        
-        except Exception as e:
-            logger.error(f"SSE连接错误: {e}")
-            raise
-    
-    async def _close_sse(self):
-        """关闭SSE连接"""
-        if self._sse_connection:
-            logger.info("正在关闭SSE连接...")
-            self._sse_connection = None
-            self._sse_listeners.clear()
-    
-    def add_sse_listener(self, listener: Callable[[Dict], None]):
-        """
-        添加SSE消息监听器
-        
-        Args:
-            listener: 消息监听器函数
-        """
-        self._sse_listeners.append(listener)
-    
-    async def get_connections(self) -> Dict[str, Any]:
-        """
-        获取活跃的SSE连接列表
-        
-        Returns:
-            连接信息
-        """
-        try:
-            response = await self.http_client.get(f"{self.mcp_base}/connections")
-            response.raise_for_status()
-            return response.json()
-        except Exception as e:
-            logger.error(f"获取连接列表失败: {e}")
-            return {"active_connections": [], "count": 0}
-    
-    # ==================== 酒店预订工具方法 ====================
     
     async def search_hotels_by_address(
         self,
@@ -404,29 +264,29 @@ class DhubHTTPMCPClient:
         
         return await self.call_tool("check_hotel_price", arguments)
 
+
 async def main():
-    """测试HTTP客户端"""
-
-    # API密钥（请替换为实际密钥）
-    api_key = "dhub_TLYC_FeVJg***********0wu_CNaK-rM"
-    secret_key = "vYMbUrYmfviHrK******************EQr7L-EuVQnYJtaqv73"
-
+    """示例：使用MCP客户端"""
+    
+    # 从环境变量读取API密钥
+    api_key = "dhub_TLY************wu_CNaK-rM"
+    secret_key = "vYMbUrYmfviHrKGCm***************uVQnYJtaqv73"
+    
     if not api_key or not secret_key:
-        logger.error("❌ 请设置 API 密钥")
+        logger.error("❌ 请设置环境变量 X_API_KEY 和 X_SECRET_KEY")
         return
-
-    # 创建客户端
-    client = DhubHTTPMCPClient(base_url="https://mcp.fusionconnectgroup.com/sse")
-
+    
+    client = DhubMCPClient()
+    
     async with client.connect():
-        logger.info("\n" + "=" * 60)
-        logger.info("开始测试 GLOBAL HOTEL SSE MCP 客户端")
-        logger.info("=" * 60 + "\n")
-
+        logger.info("\n" + "="*60)
+        logger.info("开始测试 Dhub MCP 客户端")
+        logger.info("="*60 + "\n")
+        
         # 示例1: 通过酒店名称搜索
-        logger.info("📍 示例1: 搜索长春的酒店")
+        logger.info("📍 示例1: 搜索东京的酒店")
         logger.info("-" * 60)
-
+        
         try:
             result = await client.search_hotels_by_hotel_name(
                 x_api_key=api_key,
@@ -434,25 +294,25 @@ async def main():
                 keyword="长春",
                 check_in_date="2025-12-01",
                 check_out_date="2025-12-03",
-                language="zh-CN",
+                language="en-US",
                 page_size=5
             )
             logger.info(f"\n搜索结果:\n{result}\n")
         except Exception as e:
             logger.error(f"搜索失败: {e}")
-
+        
         # 示例2: 通过地址搜索
         logger.info("\n📍 示例2: 通过经纬度搜索酒店")
         logger.info("-" * 60)
-
+        
         try:
             result = await client.search_hotels_by_address(
                 x_api_key=api_key,
                 x_secret_key=secret_key,
-                lng_google=125.276516,
+                lng_google=125.276516,  # 东京
                 lat_google=43.88597,
-                check_in_date="2025-12-10",
-                check_out_date="2025-12-12",
+                check_in_date="2025-11-21",
+                check_out_date="2025-11-23",
                 language="zh-CN",
                 distance=5,
                 page_size=5
@@ -460,29 +320,31 @@ async def main():
             logger.info(f"\n搜索结果:\n{result}\n")
         except Exception as e:
             logger.error(f"搜索失败: {e}")
-
-        # 示例3: 获取酒店详情
+        
+        # 示例3: 获取酒店详情（使用一个示例酒店ID）
         logger.info("\n📍 示例3: 查询酒店详情")
         logger.info("-" * 60)
-
+        
         try:
+            # 注意：请替换为实际的酒店ID
             hotel_id = 1364848
             result = await client.get_hotel_details(
                 x_api_key=api_key,
                 x_secret_key=secret_key,
                 hotel_id=hotel_id,
-                language="zh-CN",
+                language="en-US",
                 need_facility=True
             )
             logger.info(f"\n酒店详情:\n{result}\n")
         except Exception as e:
             logger.error(f"查询详情失败: {e}")
-
+        
         # 示例4: 查询酒店价格
         logger.info("\n📍 示例4: 查询酒店价格")
         logger.info("-" * 60)
-
+        
         try:
+            # 注意：请替换为实际的酒店ID
             hotel_id = 1364848
             result = await client.check_hotel_price(
                 x_api_key=api_key,
@@ -493,17 +355,26 @@ async def main():
                 num_of_adults=2,
                 num_of_children=0,
                 nationality="CN",
-                language="zh-CN"
+                language="en-US"
             )
             logger.info(f"\n价格信息:\n{result}\n")
         except Exception as e:
             logger.error(f"查询价格失败: {e}")
-
-        logger.info("\n" + "=" * 60)
-        logger.info("HTTP客户端测试完成")
-        logger.info("=" * 60)
+        
+        logger.info("\n" + "="*60)
+        logger.info("测试完成")
+        logger.info("="*60)
 
 
 if __name__ == "__main__":
+    # 配置日志
+    logger.add(
+        "logs/mcp_client_{time}.log",
+        rotation="1 day",
+        retention="7 days",
+        level="INFO"
+    )
+    
+    # 运行客户端
     asyncio.run(main())
 

@@ -69,7 +69,7 @@ You can obtain API credentials through two ways: **platform contact** or **self-
 
 If you need more request quotas, contact us via:
 
-- Email: 1941783199@qq.com
+- Email: yangsheng.ma@fangcang.com
 
 
 # 3. 🎯 Quick Start

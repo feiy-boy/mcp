@@ -1,6 +1,9 @@
+Here’s the full code with all comments and log messages translated to English (code logic remains unchanged):
+
+```python
 """
-全球酒店预订MCP客户端
-用于调用server.py提供的MCP工具
+Global Hotel Booking MCP Client
+Used to call MCP tools provided by server.py
 """
 import asyncio
 from typing import Optional, List, Any, Dict
@@ -11,14 +14,14 @@ from loguru import logger
 
 
 class DhubMCPClient:
-    """全球酒店预订MCP客户端"""
+    """Global Hotel Booking MCP Client"""
     
     def __init__(self, base_url: str = "https://mcp.fusionconnectgroup.com/mcp"):
         """
-        初始化MCP客户端
+        Initialize MCP Client
         
         Args:
-            base_url: MCP服务的基础URL
+            base_url: Base URL of the MCP service
         """
         self.base_url = base_url
         self.client = Client(base_url)
@@ -26,22 +29,22 @@ class DhubMCPClient:
     
     @asynccontextmanager
     async def connect(self):
-        """连接到MCP服务器"""
-        logger.info(f"正在连接到MCP服务器: {self.base_url}")
+        """Connect to MCP Server"""
+        logger.info(f"Connecting to MCP Server: {self.base_url}")
         
         async with self.client:
-            # 测试连接
+            # Test connection
             try:
                 await self.client.ping()
-                logger.info("[OK] 已连接到Global Hotel MCP服务器")
+                logger.info("[OK] Connected to Global Hotel MCP Server")
             except Exception as e:
-                logger.warning(f"Ping失败，但继续尝试: {e}")
+                logger.warning(f"Ping failed, but continuing to try: {e}")
             
-            # 列出可用工具
+            # List available tools
             try:
                 tools_result = await self.client.list_tools()
                 
-                # 处理返回结果
+                # Process return result
                 if hasattr(tools_result, 'tools'):
                     self.available_tools = tools_result.tools
                 elif isinstance(tools_result, list):
@@ -49,25 +52,25 @@ class DhubMCPClient:
                 else:
                     self.available_tools = []
                 
-                logger.info(f"可用工具数量: {len(self.available_tools)}")
+                logger.info(f"Number of available tools: {len(self.available_tools)}")
                 for tool in self.available_tools:
                     tool_name = tool.name if hasattr(tool, 'name') else str(tool)
                     tool_desc = tool.description if hasattr(tool, 'description') else ''
                     logger.info(f"  - {tool_name}: {tool_desc}")
             except Exception as e:
-                logger.error(f"获取工具列表失败: {e}")
+                logger.error(f"Failed to get tool list: {e}")
             
             yield self
     
     async def call_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
-        """调用MCP工具"""
-        logger.info(f"调用工具: {tool_name}")
-        logger.debug(f"参数: {arguments}")
+        """Call MCP Tool"""
+        logger.info(f"Calling tool: {tool_name}")
+        logger.debug(f"Arguments: {arguments}")
         
         try:
             result = await self.client.call_tool(tool_name, arguments)
             
-            # 提取文本内容
+            # Extract text content
             if hasattr(result, 'content') and result.content:
                 for content_item in result.content:
                     if hasattr(content_item, 'text'):
@@ -78,7 +81,7 @@ class DhubMCPClient:
             return str(result)
             
         except Exception as e:
-            logger.error(f"调用工具时发生错误: {e}")
+            logger.error(f"Error occurred while calling tool: {e}")
             raise
     
     async def search_hotels_by_address(
@@ -97,24 +100,24 @@ class DhubMCPClient:
         page_size: int = 20
     ) -> str:
         """
-        通过地址搜索酒店
+        Search Hotels by Address
         
         Args:
-            x_api_key: 用户的API密钥
-            x_secret_key: 用户的Secret密钥
-            lng_google: 谷歌经度（保留6位小数）
-            lat_google: 谷歌纬度（保留6位小数）
-            check_in_date: 入住日期（格式yyyy-MM-dd）
-            check_out_date: 退房日期（格式yyyy-MM-dd）
-            language: 语言类型，默认en-US，可选zh-CN
-            price_min: 最低价格
-            price_max: 最高价格
-            star_ratings: 星级列表
-            distance: 距离范围，单位km，默认5
-            page_size: 每页数量，默认20，最大50
+            x_api_key: User's API key
+            x_secret_key: User's Secret key
+            lng_google: Google longitude (keep 6 decimal places)
+            lat_google: Google latitude (keep 6 decimal places)
+            check_in_date: Check-in date (format: yyyy-MM-dd)
+            check_out_date: Check-out date (format: yyyy-MM-dd)
+            language: Language type, default en-US, optional zh-CN
+            price_min: Minimum price
+            price_max: Maximum price
+            star_ratings: List of star ratings
+            distance: Distance range, unit: km, default 5
+            page_size: Number of items per page, default 20, max 50
         
         Returns:
-            酒店列表信息
+            Hotel list information
         """
         arguments = {
             "x_api_key": x_api_key,
@@ -152,23 +155,23 @@ class DhubMCPClient:
         page_size: int = 20
     ) -> str:
         """
-        通过酒店名称搜索酒店
+        Search Hotels by Hotel Name
         
         Args:
-            x_api_key: 用户的API密钥
-            x_secret_key: 用户的Secret密钥
-            keyword: 酒店名称
-            check_in_date: 入住日期（格式yyyy-MM-dd）
-            check_out_date: 退房日期（格式yyyy-MM-dd）
-            language: 语言类型，默认en-US，可选zh-CN
-            price_min: 最低价格
-            price_max: 最高价格
-            star_ratings: 星级列表
-            distance: 距离范围，单位km，默认5
-            page_size: 每页数量，默认20，最大50
+            x_api_key: User's API key
+            x_secret_key: User's Secret key
+            keyword: Hotel name
+            check_in_date: Check-in date (format: yyyy-MM-dd)
+            check_out_date: Check-out date (format: yyyy-MM-dd)
+            language: Language type, default en-US, optional zh-CN
+            price_min: Minimum price
+            price_max: Maximum price
+            star_ratings: List of star ratings
+            distance: Distance range, unit: km, default 5
+            page_size: Number of items per page, default 20, max 50
         
         Returns:
-            酒店列表信息
+            Hotel list information
         """
         arguments = {
             "x_api_key": x_api_key,
@@ -199,17 +202,17 @@ class DhubMCPClient:
         need_facility: bool = True
     ) -> str:
         """
-        查询酒店详细信息
+        Get Hotel Detailed Information
         
         Args:
-            x_api_key: 用户的API密钥
-            x_secret_key: 用户的Secret密钥
-            hotel_id: 酒店ID
-            language: 语言类型，默认en-US，可选zh-CN
-            need_facility: 是否包含设施信息，默认True
+            x_api_key: User's API key
+            x_secret_key: User's Secret key
+            hotel_id: Hotel ID
+            language: Language type, default en-US, optional zh-CN
+            need_facility: Whether to include facility information, default True
         
         Returns:
-            酒店详细信息
+            Detailed hotel information
         """
         arguments = {
             "x_api_key": x_api_key,
@@ -234,21 +237,21 @@ class DhubMCPClient:
         language: str = "en-US"
     ) -> str:
         """
-        查询酒店实时价格和可用房型
+        Check Hotel Real-time Price and Available Room Types
         
         Args:
-            x_api_key: 用户的API密钥
-            x_secret_key: 用户的Secret密钥
-            hotel_id: 酒店ID
-            check_in_date: 入住日期（格式YYYY-MM-DD）
-            check_out_date: 退房日期（格式YYYY-MM-DD）
-            num_of_adults: 成人数量，默认2
-            num_of_children: 儿童数量，默认0
-            nationality: 国籍代码（ISO 2位代码），默认CN
-            language: 语言类型，默认en-US，可选zh-CN
+            x_api_key: User's API key
+            x_secret_key: User's Secret key
+            hotel_id: Hotel ID
+            check_in_date: Check-in date (format: YYYY-MM-DD)
+            check_out_date: Check-out date (format: YYYY-MM-DD)
+            num_of_adults: Number of adults, default 2
+            num_of_children: Number of children, default 0
+            nationality: Nationality code (ISO 2-digit code), default CN
+            language: Language type, default en-US, optional zh-CN
         
         Returns:
-            详细的价格信息
+            Detailed price information
         """
         arguments = {
             "x_api_key": x_api_key,
@@ -266,50 +269,50 @@ class DhubMCPClient:
 
 
 async def main():
-    """示例：使用MCP客户端"""
+    """Example: Use MCP Client"""
     
-    # 从环境变量读取API密钥
+    # Read API keys from environment variables
     api_key = "dhub_TLY************wu_CNaK-rM"
     secret_key = "vYMbUrYmfviHrKGCm***************uVQnYJtaqv73"
     
     if not api_key or not secret_key:
-        logger.error("❌ 请设置环境变量 X_API_KEY 和 X_SECRET_KEY")
+        logger.error("❌ Please set environment variables X_API_KEY and X_SECRET_KEY")
         return
     
     client = DhubMCPClient()
     
     async with client.connect():
         logger.info("\n" + "="*60)
-        logger.info("开始测试 Global Hotel MCP 客户端")
+        logger.info("Start testing Global Hotel MCP Client")
         logger.info("="*60 + "\n")
         
-        # 示例1: 通过酒店名称搜索
-        logger.info("📍 示例1: 搜索东京的酒店")
+        # Example 1: Search by hotel name
+        logger.info("📍 Example 1: Search hotels in Tokyo")
         logger.info("-" * 60)
         
         try:
             result = await client.search_hotels_by_hotel_name(
                 x_api_key=api_key,
                 x_secret_key=secret_key,
-                keyword="长春",
+                keyword="Changchun",
                 check_in_date="2025-12-01",
                 check_out_date="2025-12-03",
                 language="en-US",
                 page_size=5
             )
-            logger.info(f"\n搜索结果:\n{result}\n")
+            logger.info(f"\nSearch results:\n{result}\n")
         except Exception as e:
-            logger.error(f"搜索失败: {e}")
+            logger.error(f"Search failed: {e}")
         
-        # 示例2: 通过地址搜索
-        logger.info("\n📍 示例2: 通过经纬度搜索酒店")
+        # Example 2: Search by address (longitude/latitude)
+        logger.info("\n📍 Example 2: Search hotels by longitude and latitude")
         logger.info("-" * 60)
         
         try:
             result = await client.search_hotels_by_address(
                 x_api_key=api_key,
                 x_secret_key=secret_key,
-                lng_google=125.276516,  # 东京
+                lng_google=125.276516,  # Tokyo
                 lat_google=43.88597,
                 check_in_date="2025-11-21",
                 check_out_date="2025-11-23",
@@ -317,16 +320,16 @@ async def main():
                 distance=5,
                 page_size=5
             )
-            logger.info(f"\n搜索结果:\n{result}\n")
+            logger.info(f"\nSearch results:\n{result}\n")
         except Exception as e:
-            logger.error(f"搜索失败: {e}")
+            logger.error(f"Search failed: {e}")
         
-        # 示例3: 获取酒店详情（使用一个示例酒店ID）
-        logger.info("\n📍 示例3: 查询酒店详情")
+        # Example 3: Get hotel details (use a sample hotel ID)
+        logger.info("\n📍 Example 3: Query hotel details")
         logger.info("-" * 60)
         
         try:
-            # 注意：请替换为实际的酒店ID
+            # Note: Please replace with the actual hotel ID
             hotel_id = 1364848
             result = await client.get_hotel_details(
                 x_api_key=api_key,
@@ -335,16 +338,16 @@ async def main():
                 language="en-US",
                 need_facility=True
             )
-            logger.info(f"\n酒店详情:\n{result}\n")
+            logger.info(f"\nHotel details:\n{result}\n")
         except Exception as e:
-            logger.error(f"查询详情失败: {e}")
+            logger.error(f"Failed to query details: {e}")
         
-        # 示例4: 查询酒店价格
-        logger.info("\n📍 示例4: 查询酒店价格")
+        # Example 4: Check hotel price
+        logger.info("\n📍 Example 4: Query hotel price")
         logger.info("-" * 60)
         
         try:
-            # 注意：请替换为实际的酒店ID
+            # Note: Please replace with the actual hotel ID
             hotel_id = 1364848
             result = await client.check_hotel_price(
                 x_api_key=api_key,
@@ -357,17 +360,17 @@ async def main():
                 nationality="CN",
                 language="en-US"
             )
-            logger.info(f"\n价格信息:\n{result}\n")
+            logger.info(f"\nPrice information:\n{result}\n")
         except Exception as e:
-            logger.error(f"查询价格失败: {e}")
+            logger.error(f"Failed to query price: {e}")
         
         logger.info("\n" + "="*60)
-        logger.info("测试完成")
+        logger.info("Test completed")
         logger.info("="*60)
 
 
 if __name__ == "__main__":
-    # 配置日志
+    # Configure logger
     logger.add(
         "logs/mcp_client_{time}.log",
         rotation="1 day",
@@ -375,6 +378,5 @@ if __name__ == "__main__":
         level="INFO"
     )
     
-    # 运行客户端
+    # Run the client
     asyncio.run(main())
-

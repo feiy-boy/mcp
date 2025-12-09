@@ -1,8 +1,8 @@
-# FastMCP Framework (HTTP客户端支持)
+# FastMCP Framework (HTTP Client Support)
 fastmcp>=2.0.0
 
-# 日志
+# Logging
 loguru>=0.7.2
 
-# 可选: 环境变量管理
+# Optional: Environment Variable Management
 python-dotenv>=1.0.0
